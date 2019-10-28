@@ -58,5 +58,34 @@ public class Usuario {
 		return null;
 	}
 	
+	/**
+	 * Esse Metodo percorre o map e lista todas as localizações existentes 
+	 */
+	
+	Localizacao listarLocalizacao() {
+		for(int i = 1; i <= this.localizacoes.size(); i++){
+			  System.out.println(i + " - " + this.localizacao.get(i));
+			}
+	}
+	
+	/**
+	 * Esse metodo percorre o map e lista todas as Categorias existentes
+	 */
+	Categoria listarCategorias() {
+		for(int i = 1; i <= this.categorias.size(); i++){
+			  System.out.println(i + " - " + this.caterogiras.get(i));
+			}	
+	}
+	
+	Bem listarBem(String localizacao){
+			for(int i = 1; i <= this.bens.size(); i++){
+				if(this.bens.get(loc.nome) == localizacao) {
+					System.out.println(i + " - " + this.bens.get(i));
+				}	
+		}
+			else {
+				System.out.println("Não existem bens nessa localização!");
+			}
+	
 	
 }
