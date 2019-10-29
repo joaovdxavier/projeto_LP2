@@ -1,5 +1,6 @@
 package modelos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,8 @@ public class Usuario {
 	Map<Integer, Bem> bens;
 	Map<Integer, Categoria> categorias;
 	Map<String, Localizacao> localizacoes;
+	public static final int NAME_SEARCH = 1;
+	public static final int DESC_SEARCH = 2;
 	
 	public Usuario() {
 		bens = new HashMap<>();
@@ -59,33 +62,88 @@ public class Usuario {
 	}
 	
 	/**
-	 * Esse Metodo percorre o map e lista todas as localizações existentes 
+	 * @return ArrayList<Localizacao>
 	 */
+	ArrayList<Localizacao> listarLocalizacao() {
+		return new ArrayList<Localizacao>(localizacoes.values());
+	}
 	
-	Localizacao listarLocalizacao() {
-		for(int i = 1; i <= this.localizacoes.size(); i++){
-			  System.out.println(i + " - " + this.localizacao.get(i));
-			}
+	/** 
+	 * @return Arraylist<Categoria>
+	 */
+	ArrayList<Categoria> listarCategorias() {
+		return new ArrayList<Categoria>(categorias.values());	 	
 	}
 	
 	/**
-	 * Esse metodo percorre o map e lista todas as Categorias existentes
+	 * o metodo percorre a arraylist de bens e verifica se a localização desse bem é igual a que o usuario
+	 * entrou, se for ela adiciona esse bem em outro arraylist e retorna o array com todas as localizações
+	 * @param localizacao
+	 * @return bensLocalizacao
 	 */
-	Categoria listarCategorias() {
-		for(int i = 1; i <= this.categorias.size(); i++){
-			  System.out.println(i + " - " + this.caterogiras.get(i));
+	ArrayList<Bem> listarBem(Localizacao localizacao){
+		ArrayList<Bem> listaBens = new ArrayList<>(bens.values());
+		ArrayList<Bem> bensLocalizacao = new ArrayList<>();
+		for(int i = 0; i < listaBens.size(); i++){
+			Bem b = listaBens.get(i);
+			if(b.getLocalizacao().getNome().equals(localizacao.getNome())) {
+				bensLocalizacao.add(b);
 			}	
+		}
+		if(bensLocalizacao.isEmpty()) {
+			return null;
+		}
+		return bensLocalizacao;
+	}
+	/**
+	 * busca um bem por codigo e retorna se existe, se não retorna null
+	 * @param codigo
+	 * @return b
+	 */
+	Bem buscarBem(int codigo) {
+		Bem b = this.bens.get(codigo);
+		if(b == null) {
+			return null;
+		}
+		return b; //precisa retornar a localização
 	}
 	
-	Bem listarBem(String localizacao){
-			for(int i = 1; i <= this.bens.size(); i++){
-				if(this.bens.get(loc.nome) == localizacao) {
-					System.out.println(i + " - " + this.bens.get(i));
-				}	
-		}
-			else {
-				System.out.println("Não existem bens nessa localização!");
+	/**
+	 * o metodo percorre um array com os bens e verifica se tem algum bem com o mesmo nome que o usuario procura
+	 * @param nome
+	 * @return a
+	 */
+	Bem buscarBem(String busca, int tipo) {
+		ArrayList<Bem> buscarBem = new ArrayList<>(bens.values());
+		for(int i = 0; i < buscarBem.size(); i++) {
+			Bem a = buscarBem.get(i);
+			if(tipo == Usuario.NAME_SEARCH) {
+				if(a.getNome().equals(busca)){
+					return a;
+				}
 			}
-	
+			else if(tipo == Usuario.DESC_SEARCH){
+				if(a.getDescricao().equals(busca)) {
+					return a;
+				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * 
+	 * @param codigo
+	 * @param loc
+	 * @return true se achou o bem e false se não achou
+	 */
+	boolean moverBem(int codigo,Localizacao loc){
+		Bem b = this.buscarBem(codigo);
+		if(b != null) {
+			b.setLocalizacao(loc);
+			bens.put(codigo, b);
+			return true;
+		}
+		return false;
+	}
 	
 }

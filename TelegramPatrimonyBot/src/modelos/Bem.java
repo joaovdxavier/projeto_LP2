@@ -48,4 +48,8 @@ public class Bem {
 	public Categoria getCategoria(){
 		return this.categoria;
 	}
+	
+	public int getCodigo() {
+		return this.codigo;
+	}
 }

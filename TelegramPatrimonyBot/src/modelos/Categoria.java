@@ -31,5 +31,10 @@ public class Categoria {
 	public String getDescricao(){
 		return this.descricao;
 	}
+	
+	public int getCodigo() {
+		return this.codigo;
+	}
+	
 }
 

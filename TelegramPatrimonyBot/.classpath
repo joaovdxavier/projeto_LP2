@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="/home/20180069779/Documentos/projeto/projeto_LP2/lib/java-telegram-bot-api-full.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/20180069779/Documentos/projeto/projeto_LP2/lib/java-telegram-bot-api-full.jar"/>
+	<classpathentry kind="lib" path="C:/Users/italo/Documents/IMD 2019.2/LP2/projeto_LP2/lib/java-telegram-bot-api-full.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
