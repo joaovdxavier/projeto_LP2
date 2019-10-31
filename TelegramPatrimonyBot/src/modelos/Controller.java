@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Usuario {
+public class Controller {
 	Map<Integer, Bem> bens;
 	Map<Integer, Categoria> categorias;
 	Map<String, Localizacao> localizacoes;
 	public static final int NAME_SEARCH = 1;
 	public static final int DESC_SEARCH = 2;
 	
-	public Usuario() {
+	public Controller() {
 		bens = new HashMap<>();
 		categorias = new HashMap<>();
 		localizacoes = new HashMap<>();
@@ -22,7 +22,7 @@ public class Usuario {
 	 * @param codigo, nome, descricao
 	 * @return categoria cadastrada
 	 */
-	Categoria cadastrarCategoria(int codigo, String nome, String descricao) {
+	public Categoria cadastrarCategoria(int codigo, String nome, String descricao) {
 		if(this.categorias.get(codigo) == null) {
 			Categoria cat = new Categoria(codigo, nome, descricao);
 			this.categorias.put(codigo, cat);
@@ -37,7 +37,7 @@ public class Usuario {
 	 * @param nome, descricao
 	 * @return localizacao
 	 */
-	Localizacao cadastrarLocalizacao(String nome, String descricao) {
+	public Localizacao cadastrarLocalizacao(String nome, String descricao) {
 		if(this.localizacoes.get(nome) == null) {
 			Localizacao loc = new Localizacao(nome, descricao);
 			this.localizacoes.put(nome, loc);
@@ -52,11 +52,17 @@ public class Usuario {
 	 * @param codigo, nome, descricao, localizacao, categoria
 	 * @return localizacao
 	 */
-	Bem cadastrarBem(int codigo, String nome, String descricao, Localizacao loc, Categoria cat) {
-		if(this.bens.get(codigo) == null) {
-			Bem bem = new Bem(codigo, nome, descricao, loc, cat);
-			this.bens.put(codigo, bem);
-			return bem;
+	public Bem cadastrarBem(int codigo, String nome, String descricao, String nomeLoc, int codigoCat) {
+		Localizacao loc = this.localizacoes.get(nomeLoc);
+		Categoria cat = this.categorias.get(codigoCat);
+		if(cat != null && loc != null) {
+			if(this.bens.get(codigo) == null) {
+				Bem bem = new Bem(codigo, nome, descricao, loc, cat);
+				this.bens.put(codigo, bem);
+				return bem;
+			}
+		}else {
+			// exception
 		}
 		return null;
 	}
@@ -64,14 +70,14 @@ public class Usuario {
 	/**
 	 * @return ArrayList<Localizacao>
 	 */
-	ArrayList<Localizacao> listarLocalizacao() {
+	public ArrayList<Localizacao> listarLocalizacao() {
 		return new ArrayList<Localizacao>(localizacoes.values());
 	}
 	
 	/** 
 	 * @return Arraylist<Categoria>
 	 */
-	ArrayList<Categoria> listarCategorias() {
+	public ArrayList<Categoria> listarCategorias() {
 		return new ArrayList<Categoria>(categorias.values());	 	
 	}
 	
@@ -81,7 +87,7 @@ public class Usuario {
 	 * @param localizacao
 	 * @return bensLocalizacao
 	 */
-	ArrayList<Bem> listarBem(Localizacao localizacao){
+	public ArrayList<Bem> listarBem(Localizacao localizacao){
 		ArrayList<Bem> listaBens = new ArrayList<>(bens.values());
 		ArrayList<Bem> bensLocalizacao = new ArrayList<>();
 		for(int i = 0; i < listaBens.size(); i++){
@@ -100,7 +106,7 @@ public class Usuario {
 	 * @param codigo
 	 * @return b
 	 */
-	Bem buscarBem(int codigo) {
+	public Bem buscarBem(int codigo) {
 		Bem b = this.bens.get(codigo);
 		if(b == null) {
 			return null;
@@ -113,20 +119,24 @@ public class Usuario {
 	 * @param nome
 	 * @return a
 	 */
-	Bem buscarBem(String busca, int tipo) {
+	public ArrayList<Bem> buscarBem(String busca, int tipo) {
 		ArrayList<Bem> buscarBem = new ArrayList<>(bens.values());
+		ArrayList<Bem> bensPesquisados = new ArrayList<>();
 		for(int i = 0; i < buscarBem.size(); i++) {
 			Bem a = buscarBem.get(i);
-			if(tipo == Usuario.NAME_SEARCH) {
-				if(a.getNome().equals(busca)){
-					return a;
+			if(tipo == Controller.NAME_SEARCH) {
+				if(a.getNome().contains(busca)){
+					bensPesquisados.add(a);
 				}
 			}
-			else if(tipo == Usuario.DESC_SEARCH){
-				if(a.getDescricao().equals(busca)) {
-					return a;
+			else if(tipo == Controller.DESC_SEARCH){
+				if(a.getDescricao().contains(busca)) {
+					bensPesquisados.add(a);
 				}
 			}
+		}
+		if(!bensPesquisados.isEmpty()) {
+			return bensPesquisados;
 		}
 		return null;
 	}
@@ -136,7 +146,7 @@ public class Usuario {
 	 * @param loc
 	 * @return true se achou o bem e false se não achou
 	 */
-	boolean moverBem(int codigo,Localizacao loc){
+	public boolean moverBem(int codigo, Localizacao loc){
 		Bem b = this.buscarBem(codigo);
 		if(b != null) {
 			b.setLocalizacao(loc);

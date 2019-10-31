@@ -52,4 +52,9 @@ public class Bem {
 	public int getCodigo() {
 		return this.codigo;
 	}
+	
+	public String toString() {
+		return "Nome: "+this.nome+"\nDescricao: "+this.descricao+"\nLocalizacao: "+this.localizacao.getNome()
+		+"\nCategoria: "+this.categoria.getNome();
+	}
 }

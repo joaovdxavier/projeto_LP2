@@ -1,7 +1,7 @@
 package modelos;
 /**
  * 
- * @author João Vitor Dias Xavier
+ * @author Joao Vitor Dias Xavier
  *
  */
 
