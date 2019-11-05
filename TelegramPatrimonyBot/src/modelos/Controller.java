@@ -87,7 +87,11 @@ public class Controller {
 	 * @param localizacao
 	 * @return bensLocalizacao
 	 */
-	public ArrayList<Bem> listarBem(Localizacao localizacao){
+	public ArrayList<Bem> listarBem(String nome){
+		Localizacao localizacao = this.localizacoes.get(nome);
+		if(localizacao == null) {
+			return null;
+		}
 		ArrayList<Bem> listaBens = new ArrayList<>(bens.values());
 		ArrayList<Bem> bensLocalizacao = new ArrayList<>();
 		for(int i = 0; i < listaBens.size(); i++){

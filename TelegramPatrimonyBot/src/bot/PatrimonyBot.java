@@ -1,8 +1,10 @@
 package bot;
+
 import modelos.*;
 
 public class PatrimonyBot {
 	public static void main(String[] args) {
+		System.out.println("TESTANDO");
 		Controller c = new Controller();
 		c.cadastrarCategoria(0, "Movel", "cadeiras, mesas");
 		c.cadastrarCategoria(1, "Automovel", "carros, avioes");
@@ -23,8 +25,22 @@ public class PatrimonyBot {
 		Relatorio r = new Relatorio();
 		Relatorio criado = r.gerarRelatorio(c);
 		
-		for(int i = 0; i < criado.bensLocalizacao.size(); i++) {
-			System.out.println(criado.bensLocalizacao.get(i));
+		System.out.println("Ordenados por Localizacao");
+		for(int i = 0; i < criado.bensLocalizacao.length; i++) {
+			System.out.println(criado.bensLocalizacao[i]);
 		}
+		System.out.println();
+		
+		System.out.println("Ordenados por Categoria");
+		for(int i = 0; i < criado.bensCategoria.length; i++) {
+			System.out.println(criado.bensCategoria[i]);
+		}
+		System.out.println();
+		
+		System.out.println("Ordenados por Nome");
+		for(int i = 0; i < criado.bensNome.length; i++) {
+			System.out.println(criado.bensNome[i]);
+		}
+		System.out.println();
 	}
 }
