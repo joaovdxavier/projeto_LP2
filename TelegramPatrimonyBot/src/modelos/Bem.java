@@ -16,6 +16,9 @@ public class Bem {
 		this.localizacao = localizacao;
 		this.categoria = categoria;
 	}
+	public Bem(){
+		
+	}
 	
 	public void setNome(String nome){
 		this.nome = nome;
@@ -51,6 +54,10 @@ public class Bem {
 	
 	public int getCodigo() {
 		return this.codigo;
+	}
+	
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
 	}
 	
 	public String toString() {

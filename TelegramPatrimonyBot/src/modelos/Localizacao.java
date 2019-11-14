@@ -13,6 +13,9 @@ public class Localizacao {
 		this.nome = nome;
 		this.descricao = descricao;
 	}
+	public Localizacao(){
+		
+	}
 	
 	public void setNome(String nome){
 		this.nome = nome;

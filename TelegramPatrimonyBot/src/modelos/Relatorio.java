@@ -2,6 +2,8 @@ package modelos;
 
 import java.util.ArrayList;
 
+import interfaces.Ordenacao;
+
 public class Relatorio implements Ordenacao {
 	public Bem[] bensNome;
 	public Bem[] bensLocalizacao;

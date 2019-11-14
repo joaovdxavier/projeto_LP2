@@ -144,6 +144,22 @@ public class Controller {
 		}
 		return null;
 	}
+	
+	public Localizacao buscarLocalizacao(String nome) {
+		Localizacao loc = this.localizacoes.get(nome);
+		if(loc != null) {
+			return loc;
+		}
+		return null;
+	}
+	
+	public Categoria buscarCategoria(int codigo) {
+		Categoria cat = this.categorias.get(codigo);
+		if(cat != null) {
+			return cat;
+		}
+		return null;
+	}
 	/**
 	 * 
 	 * @param codigo

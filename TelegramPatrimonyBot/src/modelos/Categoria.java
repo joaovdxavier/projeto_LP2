@@ -15,6 +15,9 @@ public class Categoria {
 		this.nome = nome;
 		this.descricao = descricao;
 	}
+	public Categoria(){
+
+	}
 	
 	public void setNome(String nome){
 		this.nome = nome;
@@ -36,5 +39,8 @@ public class Categoria {
 		return this.codigo;
 	}
 	
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
 }
 
