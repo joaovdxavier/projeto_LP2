@@ -150,11 +150,18 @@ public class Controller {
 		}
 		return null;
 	}
-	
+	/**
+	 * A função adiciona um novo bem no map
+	 * @param novoBem
+	 */
 	public void putBem(Bem novoBem) {
 		this.bens.put(novoBem.getCodigo(), novoBem);
 	}
-	
+	/**
+	 * A função verifica se a localização é null
+	 * @param nome
+	 * @return loc
+	 */
 	public Localizacao buscarLocalizacao(String nome) {
 		Localizacao loc = this.localizacoes.get(nome);
 		if(loc != null) {
@@ -162,7 +169,11 @@ public class Controller {
 		}
 		return null;
 	}
-	
+	/**
+	 * A função verifica se categoria não é null
+	 * @param codigo
+	 * @return null
+	 */
 	public Categoria buscarCategoria(int codigo) {
 		Categoria cat = this.categorias.get(codigo);
 		if(cat != null) {

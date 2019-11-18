@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="lib" path="C:/Users/italo/Documents/IMD 2019.2/LP2/projeto_LP2/lib/telegrambots-4.4.0.1-jar-with-dependencies.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

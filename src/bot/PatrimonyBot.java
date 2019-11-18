@@ -1,14 +1,13 @@
 package bot;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import json.JSONWriter;
+import exception.BemDuplicadoException;
+import exception.NullBemCatException;
+import exception.NullBemLocException;
 import modelos.*;
 
 public class PatrimonyBot extends TelegramLongPollingBot {
@@ -21,7 +20,7 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 	int cod;
 
 	@Override
-	public void onUpdateReceived(Update update) {
+	public void onUpdateReceived(Update update) throws NullPointerException{
 		if (update.hasMessage() && update.getMessage().hasText()) {
 
 			String lastCommand = update.getMessage().getText();
@@ -75,13 +74,18 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 				this.state = BotState.waitingLocName;
 			} else if (this.state == BotState.waitingBemCodigo) {
 				Bem buscado = c.buscarBem(Integer.parseInt(lastCommand));
-				if (buscado == null) {
-					b.setCodigo(Integer.parseInt(lastCommand));
-					message.setText("Digite o nome do bem");
-					this.state = BotState.waitingBemNome;
-				} else {
-					message.setText("Ja existe um bem cadastrado com esse codigo. O nome dele eh " + buscado.getNome());
+				try {
+					if (buscado == null) {
+						b.setCodigo(Integer.parseInt(lastCommand));
+						message.setText("Digite o nome do bem");
+						this.state = BotState.waitingBemNome;
+					} else {
+						throw new BemDuplicadoException();
+					}
+				}catch (BemDuplicadoException e){
+					message.setText(e.getMessage());
 				}
+				
 			} else if (this.state == BotState.waitingBemNome) {
 				message.setText("Digite a descricao do bem");
 				b.setNome(lastCommand);
@@ -92,24 +96,34 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 				this.state = BotState.waitingBemLoc;
 			} else if (this.state == BotState.waitingBemLoc) {
 				Localizacao loc = c.buscarLocalizacao(lastCommand);
-				if (loc != null) {
-					b.setLocalizacao(loc);
-					message.setText("Digite a categoria do bem");
-					this.state = BotState.waitingBemCat;
-				} else {
-					message.setText("Essa localizacao nao existe nos meus registros");
+				try {
+					if (loc != null) {
+						b.setLocalizacao(loc);
+						message.setText("Digite a categoria do bem");
+						this.state = BotState.waitingBemCat;
+					} else {
+						throw new NullBemLocException();
+					}
+				}catch (NullBemLocException e) {
+					message.setText(e.getMessage());
 				}
+			
 			} else if (this.state == BotState.waitingBemCat) {
 				Categoria cate = c.buscarCategoria(Integer.parseInt(lastCommand));
-				if (cate != null) {
-					b.setCategoria(cate);
-					message.setText("Ok, seu bem foi cadastrado!");
-					this.state = BotState.waitNewCommand;
-					c.cadastrarBem(b.getCodigo(), b.getNome(), b.getDescricao(), b.getLocalizacao().getNome(),
-							b.getCategoria().getCodigo());
-				} else {
-					message.setText("Essa categoria nao existe nos meus registros");
+				try {
+					if (cate != null) {
+						b.setCategoria(cate);
+						message.setText("Ok, seu bem foi cadastrado!");
+						this.state = BotState.waitNewCommand;
+						c.cadastrarBem(b.getCodigo(), b.getNome(), b.getDescricao(), b.getLocalizacao().getNome(),
+								b.getCategoria().getCodigo());
+					} else {
+						throw new NullBemCatException();
+					}
+				}catch (NullBemCatException e) {
+					message.setText(e.getMessage());
 				}
+				
 			} else if (this.state == BotState.waitingLocName) {
 				Localizacao loc = c.buscarLocalizacao(lastCommand);
 				if (loc == null) {
