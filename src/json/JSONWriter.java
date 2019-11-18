@@ -17,6 +17,7 @@ public abstract class JSONWriter {
 		//Cria um Objeto JSON
 		//JSONArray array = new JSONArray();
 	    JSONObject jsonObject = new JSONObject();
+	    JSONArray j = JSONRead.lerArray("bens");
 	     
 	    FileWriter writeFile = null;
 	     
@@ -27,11 +28,13 @@ public abstract class JSONWriter {
 	    jsonObject.put("categoria", b.getCategoria().getCodigo());
 	    jsonObject.put("localizacao", b.getLocalizacao().getNome());
 	    
+	    j.put(jsonObject);
+	    
 	    //array.put(jsonObject);
 	    try{
 	        writeFile = new FileWriter("bens.json", true);
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(jsonObject.toString());
+	        writeFile.append(j.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){
@@ -47,7 +50,7 @@ public abstract class JSONWriter {
 	public static int gravarCat(Categoria c) {
 		//JSONArray array = new JSONArray();
 	    JSONObject jsonObject = new JSONObject();
-	     
+	    JSONArray j = JSONRead.lerArray("categorias");
 	    FileWriter writeFile = null;
 	     
 	    //Armazena dados em um Objeto JSON
@@ -55,12 +58,13 @@ public abstract class JSONWriter {
 	    jsonObject.put("nome", c.getNome());
 	    jsonObject.put("descricao", c.getDescricao());
 	    
+	    j.put(jsonObject);
 	    //array.put(jsonObject);
 	     
 	    try{
 	        writeFile = new FileWriter("categorias.json", true);
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(jsonObject.toString());
+	        writeFile.append(j.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){
@@ -76,19 +80,20 @@ public abstract class JSONWriter {
 	public static int gravarLoc(Localizacao l) {
 		//JSONArray array = new JSONArray();
 	    JSONObject jsonObject = new JSONObject();
-	     
+	    JSONArray j = JSONRead.lerArray("localizacoes");
 	    FileWriter writeFile = null;
+	    System.out.println(j.toString());
 	     
 	    //Armazena dados em um Objeto JSON
 	    jsonObject.put("nome", l.getNome());
 	    jsonObject.put("descricao", l.getDescricao());
 	    
-	    //array.put(jsonObject);
+	    j.put(jsonObject);	    //array.put(jsonObject);
 	     
 	    try{
 	        writeFile = new FileWriter("localizacoes.json", true);
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(jsonObject.toString());
+	        writeFile.append(j.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import json.JSONRead;
 import json.JSONWriter;
 
 public class Controller {
@@ -14,9 +15,9 @@ public class Controller {
 	public static final int DESC_SEARCH = 2;
 	
 	public Controller() {
-		bens = new HashMap<>();
-		categorias = new HashMap<>();
-		localizacoes = new HashMap<>();
+		bens = JSONRead.lerJsonBens() != null ? JSONRead.lerJsonBens() : new HashMap<>();
+		categorias = JSONRead.lerJsonCats() != null ? JSONRead.lerJsonCats() : new HashMap<>();
+		localizacoes = JSONRead.lerJsonLocs() != null ? JSONRead.lerJsonLocs() : new HashMap<>();
 	}
 	/**
 	 * Esse método recebe os dados de uma categoria e retorna uma nova categoria. 
