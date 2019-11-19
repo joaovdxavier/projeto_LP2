@@ -1,13 +1,13 @@
 package bot;
 
 import java.util.ArrayList;
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import exception.BemDuplicadoException;
-import exception.NullBemCatException;
-import exception.NullBemLocException;
+
+import exceptions.*;
 import modelos.*;
 
 public class PatrimonyBot extends TelegramLongPollingBot {
@@ -20,58 +20,76 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 	int cod;
 
 	@Override
-	public void onUpdateReceived(Update update) throws NullPointerException{
+	public void onUpdateReceived(Update update) {
 		if (update.hasMessage() && update.getMessage().hasText()) {
 
 			String lastCommand = update.getMessage().getText();
 			SendMessage message = new SendMessage();
-			System.out.println("State atual: " + this.state);
 			if (lastCommand.equals("/start")) {
-				message.setText("Ola, eu sou o Bob Patrimonio e vou te ajudar a administrar os seus bens. O que deseja fazer?");
+				message.setText("Olá, eu sou o Bob Patrimônio e vou te ajudar a administrar os seus bens. O que deseja fazer?");
 				this.state = BotState.waitNewCommand;
 			}else if(lastCommand.equals("cancelar")) {
+				message.setText("Ok, vou parar de fazer o que eu estava fazendo.");
 				this.state = BotState.waitNewCommand;
 			}else if (this.state == BotState.waitNewCommand) {
 				if (lastCommand.equals("/cadbem")) {
-					this.state = BotState.cadastrarBem;
+					message.setText("Me diz o código do seu bem.");
+					this.state = BotState.waitingBemCodigo;
 				} else if (lastCommand.equals("/cadlocalizacao")) {
-					this.state = BotState.cadastrarLocalizacao;
+					message.setText("Me diz o nome da localização");
+					this.state = BotState.waitingLocName;
 				} else if (lastCommand.equals("/cadcategoria")) {
-					this.state = BotState.cadastrarCategoria;
+					message.setText("Me diz o código da sua categoria");
+					this.state = BotState.waitingCatCodigo;
 				} else if (lastCommand.equals("/listabemloc")) {
-					message.setText("Me diz em qual localizacao seu bem esta ;)");
+					message.setText("Me diz em qual localização seu bem está");
 					this.state = BotState.listandoBemLoc;
 				} else if (lastCommand.equals("/listacat")) {
-					this.state = BotState.listandoCat;
-					message.setText("Aqui vao as categorias cadastradas ate o momento");
+					ArrayList<Categoria> cats = c.listarCategorias();
+					String catss = "";
+					if (!cats.isEmpty()) {
+						catss += "Ok, aqui estão suas categorias cadastradas\n";
+						for(int i = 0; i < cats.size(); i++) {
+							catss += cats.get(i).toString()+"\n***\n";
+						}
+						message.setText(catss);
+					} else {
+						message.setText("Não tem categorias cadastradas no momento. :(");
+					}
+					this.state = BotState.waitNewCommand;
 				} else if (lastCommand.equals("/listaloc")) {
-					this.state = BotState.listandoLoc;
-				} else if (lastCommand.equals("/buscarbemcodigo")) {
+					ArrayList<Localizacao> locs = c.listarLocalizacao();
+					String locss = "";
+					if (!locs.isEmpty()) {
+						locss += "Ok, aqui estão suas localizações cadastradas\n";
+						for(int i = 0; i < locs.size(); i++) {
+							locss += locs.get(i).toString()+"\n***\n";
+						}
+						message.setText(locss);
+					} else {
+						message.setText("Não tem localizações cadastradas no momento. :(");
+					}
+					this.state = BotState.waitNewCommand;
+				} else if (lastCommand.equals("/buscabemcod")) {
+					message.setText("Digite o código do bem que você quer procurar");
 					this.state = BotState.buscarBemCod;
-				} else if (lastCommand.equals("/buscarbemnome")) {
+				} else if (lastCommand.equals("/buscabemnome")) {
+					message.setText("Digite o nome do bem que você quer procurar");
 					this.state = BotState.buscarBemNome;
-				} else if (lastCommand.equals("/buscarbemdescricao")) {
+				} else if (lastCommand.equals("/buscabemdes")) {
+					message.setText("Digite a descrição do bem que você quer procurar");
 					this.state = BotState.buscarBemDescription;
-				} else if (lastCommand.equals("/movimentarbem")) {
-					message.setText("Digite o codigo do bem");
+				} else if (lastCommand.equals("/movimentabem")) {
+					message.setText("Digite o código do bem");
 					this.state = BotState.movimentandoBemWaitingNome;
 				} else if (lastCommand.equals("/gerarrelatorio")) {
-					message.setText("Seus bens ordenados por localizacao, por categoria e por nome");
-					this.state = BotState.gerandoRelatorio1;
-				} else if (lastCommand.equals("/finalizar")) {
-					this.state = BotState.finalize;
+					Relatorio r = new Relatorio();
+					r = r.gerarRelatorio(c);
+					message.setText("Seus bens ordenados por nome, categoria e localização:\n"+r.toString());
+					this.state = BotState.waitNewCommand;
 				} else {
-					message.setText("Nao entendi o que voce quer fazer! Digite novamente.");
+					message.setText("Não entendi o que voce quer fazer! Digite novamente.");
 				}
-			} else if (this.state == BotState.cadastrarBem) {
-				message.setText("Digite o codigo do bem");
-				this.state = BotState.waitingBemCodigo;
-			} else if (this.state == BotState.cadastrarCategoria) {
-				message.setText("Digite o codigo da categoria");
-				this.state = BotState.waitingCatCodigo;
-			} else if (this.state == BotState.cadastrarLocalizacao) {
-				message.setText("Digite o nome da localizacao");
-				this.state = BotState.waitingLocName;
 			} else if (this.state == BotState.waitingBemCodigo) {
 				Bem buscado = c.buscarBem(Integer.parseInt(lastCommand));
 				try {
@@ -85,15 +103,16 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 				}catch (BemDuplicadoException e){
 					message.setText(e.getMessage());
 				}
-				
 			} else if (this.state == BotState.waitingBemNome) {
-				message.setText("Digite a descricao do bem");
+				message.setText("Digite a descrição do bem");
 				b.setNome(lastCommand);
 				this.state = BotState.waitingBemDescription;
+				
 			} else if (this.state == BotState.waitingBemDescription) {
 				b.setDescricao(lastCommand);
-				message.setText("Digite a localizacao do bem");
+				message.setText("Digite a localização do bem");
 				this.state = BotState.waitingBemLoc;
+				
 			} else if (this.state == BotState.waitingBemLoc) {
 				Localizacao loc = c.buscarLocalizacao(lastCommand);
 				try {
@@ -102,12 +121,12 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 						message.setText("Digite a categoria do bem");
 						this.state = BotState.waitingBemCat;
 					} else {
-						throw new NullBemLocException();
+						throw new NullLocException();
 					}
-				}catch (NullBemLocException e) {
+				}catch (NullLocException e) {
 					message.setText(e.getMessage());
 				}
-			
+				
 			} else if (this.state == BotState.waitingBemCat) {
 				Categoria cate = c.buscarCategoria(Integer.parseInt(lastCommand));
 				try {
@@ -118,99 +137,95 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 						c.cadastrarBem(b.getCodigo(), b.getNome(), b.getDescricao(), b.getLocalizacao().getNome(),
 								b.getCategoria().getCodigo());
 					} else {
-						throw new NullBemCatException();
+						throw new NullCatException();
 					}
-				}catch (NullBemCatException e) {
+				}catch (NullCatException e) {
 					message.setText(e.getMessage());
 				}
 				
 			} else if (this.state == BotState.waitingLocName) {
 				Localizacao loc = c.buscarLocalizacao(lastCommand);
-				if (loc == null) {
-					l.setNome(lastCommand);
-					message.setText("Digite a descricao da localizacao");
-					this.state = BotState.waitingLocDescription;
-				} else {
-					message.setText("Ja existe uma localizacao com esse nome nos meus registros");
+				try {
+					if (loc == null) {
+						l.setNome(lastCommand);
+						message.setText("Digite a descrição da localização");
+						this.state = BotState.waitingLocDescription;
+					} else {
+						throw new LocDuplicadaException();
+					}
+				}catch(LocDuplicadaException e) {
+					message.setText(e.getMessage());
 				}
+				
 			} else if (this.state == BotState.waitingLocDescription) {
 				l.setDescricao(lastCommand);
 				this.state = BotState.waitNewCommand;
-				message.setText("Ok, sua localizacao foi cadastrada!");
+				message.setText("Ok, sua localização foi cadastrada!");
 				c.cadastrarLocalizacao(l.getNome(), l.getDescricao());
+				
 			} else if (this.state == BotState.waitingCatCodigo) {
 				Categoria cat = c.buscarCategoria(Integer.parseInt(lastCommand));
-				if (cat == null) {
-					this.cat.setCodigo(Integer.parseInt(lastCommand));
-					message.setText("Digite o nome da categoria");
-					this.state = BotState.waitingCatNome;
-				} else {
-					message.setText("Essa categoria ja existe nos meus registros");
+				try {
+					if (cat == null) {
+						this.cat.setCodigo(Integer.parseInt(lastCommand));
+						message.setText("Digite o nome da categoria");
+						this.state = BotState.waitingCatNome;
+					} else {
+						throw new CatDuplicadaException();
+					}
+				}catch(CatDuplicadaException e) {
+					message.setText(e.getMessage());
 				}
+				
 			} else if (this.state == BotState.waitingCatNome) {
 				this.cat.setNome(lastCommand);
-				message.setText("Digite a descricao da categoria");
+				message.setText("Digite a descrição da categoria");
 				this.state = BotState.waitingCatDescription;
+				
 			} else if (this.state == BotState.waitingCatDescription) {
 				this.cat.setDescricao(lastCommand);
 				message.setText("Essa categoria acaba de entrar nos meus registros! :)");
 				c.cadastrarCategoria(cat.getCodigo(), cat.getNome(), cat.getDescricao());
 				this.state = BotState.waitNewCommand;
+				
 			} else if (this.state == BotState.listandoBemLoc) {
 				ArrayList<Bem> bens = c.listarBem(lastCommand);
-				ArrayList<String> bens_string = new ArrayList<>();
+				String bens_string = "";
 				if (bens != null && !bens.isEmpty()) {
-					message.setText("Ok, aqui estao os bens em " + lastCommand);
-					bens.forEach(b -> bens_string.add(b.getNome()));
-					message.setText(String.valueOf(bens_string));
+					bens_string += "Ok, aqui estão os bens em " + lastCommand + "\n";
+					for(int i = 0; i < bens.size(); i++) {
+						bens_string += bens.get(i).toString()+"\n***\n";
+					}
+					message.setText(bens_string);
 				} else {
-					message.setText("Nao ha bens cadastrados nessa localizacao");
+					message.setText("Não há bens cadastrados nessa localização");
 				}
 				this.state = BotState.waitNewCommand;
-			} else if (this.state == BotState.listandoCat) {
-				ArrayList<Categoria> cats = c.listarCategorias();
-				ArrayList<String> catss = new ArrayList<>();
-				if (!cats.isEmpty()) {
-					cats.forEach(d -> catss.add(d.getNome()));
-					message.setText(String.valueOf(catss));
-				} else {
-					message.setText("Nao tem categorias cadastradas no momento. :(");
-				}
-				this.state = BotState.waitNewCommand;
-			}else if(this.state == BotState.listandoLoc) {
-				ArrayList<Localizacao> locs = c.listarLocalizacao();
-				ArrayList<String> locss = new ArrayList<>();
-				if (!locs.isEmpty()) {
-					locs.forEach(d -> locss.add(d.getNome()));
-					message.setText(String.valueOf(locss));
-				} else {
-					message.setText("Nao tem localizacoes cadastradas no momento. :(");
-				}
-				this.state = BotState.waitNewCommand;
-			}else if (this.state == BotState.movimentandoBemWaitingNome) {
+				
+			} else if (this.state == BotState.movimentandoBemWaitingNome) {
 				this.cod = Integer.parseInt(lastCommand);
 				newBem = c.buscarBem(cod);
 				if(newBem != null) {
-					message.setText("Ok, seu bem foi encontrado! Fala pra mim a nova localizacao dele.");
+					message.setText("Ok, seu bem foi encontrado! Fala pra mim a nova localização dele.");
 					this.state = BotState.movimentandoBemWaitingLoc;
 				}else {
-					message.setText("Nao encontrei nenhum bem com esse codigo nos meus registros");
+					message.setText("Não encontrei nenhum bem com esse código nos meus registros");
 				}
+				
 			}else if(this.state == BotState.movimentandoBemWaitingLoc) {
 				Localizacao loc = c.buscarLocalizacao(lastCommand);
-				if(loc != null) {
-					message.setText("Ok, to substituindo "+newBem.getLocalizacao().getNome()+" por "+lastCommand);
-					newBem.setLocalizacao(loc);
-					c.putBem(newBem);
-					this.state = BotState.waitNewCommand;
-				}else {
-					message.setText("Nao encontrei essa localizacao nos meus registros...");
+				try {
+					if(loc != null) {
+						message.setText("Ok, to substituindo "+newBem.getLocalizacao().getNome()+" por "+lastCommand);
+						newBem.setLocalizacao(loc);
+						c.putBem(newBem);
+						this.state = BotState.waitNewCommand;
+					}else {
+						throw new NullLocException();
+					}
+				}catch(NullLocException e) {
+					message.setText(e.getMessage());
 				}
-			}else if(this.state == BotState.gerandoRelatorio1) {
-				Relatorio r = new Relatorio();
-				r = r.gerarRelatorio(c);
-				message.setText(String.valueOf(r.bensLocalizacao) + "\n" + String.valueOf(r.bensCategoria) +"\n"+String.valueOf(r.bensNome));
-				this.state = BotState.waitNewCommand;
 			} else if (this.state == BotState.buscarBemCod) {
 				int cod = Integer.parseInt(lastCommand);
 				Bem b = c.buscarBem(cod);
@@ -218,24 +233,50 @@ public class PatrimonyBot extends TelegramLongPollingBot {
 					message.setText(b.toString());
 					this.state = BotState.waitNewCommand;
 				}else {
-					message.setText("Nao encontrei seu bem :(");
+					message.setText("Não encontrei seu bem :(");
 				}
+				
 			}else if(this.state == BotState.buscarBemNome) {
 				ArrayList<Bem> bens = c.buscarBem(lastCommand, 1);
-				message.setText(String.valueOf(bens));
-				this.state = BotState.waitNewCommand;
+				if(!bens.isEmpty()) {
+					String bensBuscados = "Esses são os bens que eu achei que contém esse nome\n";
+					for(int i = 0; i < bens.size(); i++) {
+						Bem bem = bens.get(i);
+						bensBuscados += bem.toString() + "\n***\n";
+					}
+					message.setText(bensBuscados);
+					this.state = BotState.waitNewCommand;
+				}else {
+					message.setText("Não encontrei bens com esse nome.");
+				}
+				
+				
 			}else if(this.state == BotState.buscarBemDescription) {
 				ArrayList<Bem> bens = c.buscarBem(lastCommand, 2);
-				message.setText(String.valueOf(bens));
-				this.state = BotState.waitNewCommand;
+				if(!bens.isEmpty()) {
+					String bensBuscados = "Esses são os bens que eu achei que contém essa descrição\n";
+					for(int i = 0; i < bens.size(); i++) {
+						Bem bem = bens.get(i);
+						bensBuscados += bem.toString() + "\n***\n";
+					}
+					message.setText(bensBuscados);
+					this.state = BotState.waitNewCommand;
+				}else {
+					message.setText("Não encontrei bens com essa descrição.");
+				}
+				
 			}
+			
 			message.setChatId(update.getMessage().getChatId());
+			System.out.println("State atual: " + this.state);
+
 
 			try {
 				execute(message);
 			} catch (TelegramApiException e) {
 				
 			}
+			
 		}
 	}
 

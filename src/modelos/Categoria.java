@@ -42,5 +42,9 @@ public class Categoria {
 	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}
+	
+	public String toString() {
+		return "Nome: "+this.getNome()+"\nDescrição: "+ this.descricao;
+	}
 }
 

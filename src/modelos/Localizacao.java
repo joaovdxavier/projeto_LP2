@@ -32,4 +32,8 @@ public class Localizacao {
 	public String getDescricao(){
 		return this.descricao;
 	}
+	
+	public String toString() {
+		return "Nome: "+this.getNome()+"\nDescrição: "+ this.descricao;
+	}
 }

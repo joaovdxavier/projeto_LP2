@@ -52,6 +52,7 @@ public abstract class JSONRead {
 				JSONObject j1 = j.getJSONObject(i);
 				b.setCodigo(j1.getInt("codigo"));
 				b.setNome(j1.getString("nome"));
+				b.setDescricao(j1.getString("descricao"));
 				b.setCategoria(cats.get(j1.getInt("categoria")));
 				b.setLocalizacao(locs.get(j1.getString("localizacao")));
 				bens.put(b.getCodigo(), b);

@@ -94,4 +94,24 @@ public class Relatorio implements Ordenacao {
 		r.bensNome = this.ordena(bens);
 		return r;
 	}
+	
+	/**
+	 * Esse método facilita a impressão de um objeto do tipo relatorio
+	 * @return Uma string contendo os atributos do objeto
+	 */
+	public String toString() {
+		String completa = "ORDENADO POR NOME\n";
+		for(int i = 0; i < bensNome.length; i++)
+			completa += bensNome[i].toString() + "\n***\n";
+		
+		completa += "\nORDENADO POR CATEGORIA\n";
+		for(int i = 0; i < bensCategoria.length; i++)
+			completa += bensCategoria[i].toString() + "\n***\n";
+		
+		completa += "\nORDENADO POR LOCALIZACAO\n";
+		for(int i = 0; i < bensLocalizacao.length; i++)
+			completa += bensLocalizacao[i].toString() + "\n***\n";
+		
+		return completa;
+	}
 }

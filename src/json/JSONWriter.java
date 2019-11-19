@@ -30,11 +30,14 @@ public abstract class JSONWriter {
 	    
 	    j.put(jsonObject);
 	    
+	    JSONObject save = new JSONObject();
+	    save.put("bens", j);
+	    
 	    //array.put(jsonObject);
 	    try{
-	        writeFile = new FileWriter("bens.json", true);
+	        writeFile = new FileWriter("bens.json");
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(j.toString());
+	        writeFile.write(save.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){
@@ -59,12 +62,14 @@ public abstract class JSONWriter {
 	    jsonObject.put("descricao", c.getDescricao());
 	    
 	    j.put(jsonObject);
-	    //array.put(jsonObject);
+	    
+	    JSONObject save = new JSONObject();
+	    save.put("categorias", j);
 	     
 	    try{
-	        writeFile = new FileWriter("categorias.json", true);
+	        writeFile = new FileWriter("categorias.json");
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(j.toString());
+	        writeFile.write(save.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){
@@ -88,12 +93,14 @@ public abstract class JSONWriter {
 	    jsonObject.put("nome", l.getNome());
 	    jsonObject.put("descricao", l.getDescricao());
 	    
-	    j.put(jsonObject);	    //array.put(jsonObject);
+	    j.put(jsonObject);
+	    JSONObject save = new JSONObject();
+	    save.put("localizacoes", j);
 	     
 	    try{
-	        writeFile = new FileWriter("localizacoes.json", true);
+	        writeFile = new FileWriter("localizacoes.json");
 	        //Escreve no arquivo conteudo do Objeto JSON
-	        writeFile.append(j.toString());
+	        writeFile.write(save.toString());
 	        writeFile.close();
 	    }
 	    catch(IOException e){

@@ -1,5 +1,7 @@
 package modelos;
 
+import org.json.JSONObject;
+
 public class Bem {
 	int codigo;
 	String nome;
